@@ -12,24 +12,29 @@
 
     <style>
         :root {
-            --bg-main: #0b0f19;
-            --bg-card: #121826;
-            --bg-card-header: #1a233a;
+            --bg-main: #070a12;
+            --bg-card: rgba(18, 24, 38, 0.75);
+            --bg-card-header: rgba(26, 35, 58, 0.85);
             --text-main: #f8f9fa;
             --text-muted: #8b9bb4;
             --neon-blue: #00f0ff;
             --neon-green: #39ff14;
             --neon-red: #ff3131;
             --neon-orange: #ff9900;
-            --grid-border: #222e4b;
+            --neon-purple: #b026ff;
+            --grid-border: rgba(34, 46, 75, 0.8);
+            --glow-blue: rgba(0, 240, 255, 0.15);
         }
 
         body {
             background-color: var(--bg-main);
             background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(176, 38, 255, 0.05) 0%, transparent 40%),
                 linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+            background-attachment: fixed;
             min-height: 100vh;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
             color: var(--text-main);
@@ -37,17 +42,19 @@
 
         .card {
             border: 1px solid var(--grid-border);
-            border-radius: 12px;
+            border-radius: 14px;
             margin-bottom: 24px;
             background: var(--bg-card);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card-header {
             background-color: var(--bg-card-header) !important;
             border-bottom: 1px solid var(--grid-border);
-            border-top-left-radius: 12px !important;
-            border-top-right-radius: 12px !important;
+            border-top-left-radius: 14px !important;
+            border-top-right-radius: 14px !important;
             font-weight: 600;
             letter-spacing: 0.5px;
             color: var(--text-main) !important;
@@ -55,32 +62,32 @@
 
         .header-blue { border-left: 4px solid var(--neon-blue); }
         .header-green { border-left: 4px solid var(--neon-green); }
-        .header-dark { border-left: 4px solid var(--text-muted); }
+        .header-dark { border-left: 4px solid var(--neon-purple); }
 
         canvas {
-            height: 400px !important;
+            height: 380px !important;
         }
 
         .table {
             color: var(--text-main);
             --bs-table-bg: transparent;
-            --bs-table-hover-bg: rgba(255, 255, 255, 0.03);
-            --bs-table-striped-bg: rgba(255, 255, 255, 0.01);
+            --bs-table-hover-bg: rgba(0, 240, 255, 0.03);
+            --bs-table-striped-bg: rgba(255, 255, 255, 0.015);
             border-color: var(--grid-border);
         }
 
         .table thead th {
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: rgba(10, 14, 23, 0.6) !important;
             color: var(--text-muted);
             border-bottom: 2px solid var(--grid-border);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
+            font-size: 0.72rem;
+            letter-spacing: 1.2px;
         }
 
         .badge {
-            padding: 0.5em 0.75em;
+            padding: 0.45em 0.75em;
             border-radius: 6px;
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -90,33 +97,32 @@
         .badge-watt { background: rgba(255, 49, 49, 0.1); color: var(--neon-red); border: 1px solid rgba(255, 49, 49, 0.3); }
         
         .badge-online { 
-            background: rgba(57, 255, 20, 0.15); color: var(--neon-green); border: 1px solid var(--neon-green);
-            box-shadow: 0 0 8px rgba(57, 255, 20, 0.3);
+            background: rgba(57, 255, 20, 0.12); color: var(--neon-green); border: 1px solid rgba(57, 255, 20, 0.4);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.25);
         }
         .badge-offline { 
-            background: rgba(255, 49, 49, 0.15); color: var(--neon-red); border: 1px solid var(--neon-red);
-            box-shadow: 0 0 8px rgba(255, 49, 49, 0.3);
+            background: rgba(255, 49, 49, 0.12); color: var(--neon-red); border: 1px solid rgba(255, 49, 49, 0.4);
+            box-shadow: 0 0 10px rgba(255, 49, 49, 0.25);
         }
 
         .search-control {
             max-width: 300px;
             border-radius: 8px;
-            background-color: var(--bg-main);
+            background-color: rgba(7, 10, 18, 0.8);
             border: 1px solid var(--grid-border);
-            padding: 0.4rem 0.75rem;
+            padding: 0.4rem 0.85rem;
             color: var(--text-main);
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
         
         .search-control:focus {
-            background-color: var(--bg-main);
+            background-color: rgba(7, 10, 18, 0.95);
             color: var(--text-main);
             border-color: var(--neon-blue);
             outline: 0;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
         }
 
-        /* Fixed Pagination & Layout Alignment */
         .page-link {
             border: 1px solid var(--grid-border);
             background-color: transparent;
@@ -134,10 +140,10 @@
         }
 
         .page-item.active .page-link {
-            background-color: rgba(0, 240, 255, 0.1);
+            background-color: rgba(0, 240, 255, 0.15);
             color: var(--neon-blue);
             border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
         }
 
         .page-item.disabled .page-link {
@@ -155,20 +161,53 @@
 
         .btn-add-device {
             border-radius: 8px;
-            padding: 0.5rem 1.25rem;
+            padding: 0.55rem 1.35rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            background: linear-gradient(135deg, #00f0ff 0%, #0072ff 100%);
+            color: #050b14 !important;
             border: none;
-            box-shadow: 0 0 15px rgba(0, 114, 255, 0.4);
-            transition: all 0.2s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+            transition: all 0.25s ease;
         }
 
         .btn-add-device:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
             opacity: 0.95;
         }
-        
+
+        /* Upgraded Device Metric Cards */
+        .device-card {
+            background: rgba(18, 24, 38, 0.85);
+            border: 1px solid var(--grid-border);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .device-card:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 240, 255, 0.15);
+        }
+
+        .device-power-val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
         .text-muted {
             color: var(--text-muted) !important;
         }
@@ -176,66 +215,120 @@
 </head>
 <body>
 
-<div class="container mt-4 pb-5">
+<div class="container-fluid max-ww px-md-5 mt-4 pb-5">
 
+    <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <h2 class="mb-0 fw-bold text-white" style="text-shadow: 0 0 12px rgba(0,240,255,0.3);">⚡ Power Monitoring Dashboard</h2>
-        <a href="{% url 'register_device' %}" class="btn btn-primary btn-add-device d-flex align-items-center gap-2 text-white">
-            <i class="bi bi-plus-lg"></i> Add Device
+        <div>
+            <h2 class="mb-1 fw-bold text-white d-flex align-items-center gap-2" style="text-shadow: 0 0 16px rgba(0,240,255,0.4);">
+                <i class="bi bi-lightning-charge-fill text-info"></i> Power Monitoring Dashboard
+            </h2>
+            <p class="text-muted small mb-0">Real-time telemetric grid analysis & device management</p>
+        </div>
+        <a href="{% url 'register_device' %}" class="btn btn-primary btn-add-device d-flex align-items-center gap-2">
+            <i class="bi bi-plus-lg fw-bold"></i> Add Device
         </a>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header header-blue py-3">
-            <i class="bi bi-cpu text-info me-2"></i> Registered Devices
-        </div>
+    <!-- Registered Devices Table Card -->
 
-        <div class="card-body p-0 table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Device ID</th>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th class="pe-4">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for device in devices %}
-                    <tr>
-                        <td class="ps-4 fw-semibold text-info">{{ device.device_id }}</td>
-                        <td class="fw-medium">{{ device.device_name }}</td>
-                        <td class="text-muted">{{ device.location }}</td>
-                        <td class="pe-4">
-                            {% if device.is_active %}
-                                <span class="badge badge-online">Online</span>
-                            {% else %}
-                                <span class="badge badge-offline">Offline</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    <div class="row g-3 mb-4">
+    {% for item in devices %}
+    <div class="col-xl-3 col-lg-4 col-md-6">
+        <div class="card device-card h-100 shadow-sm mb-0">
+            <div class="card-header border-0 bg-transparent py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-white text-truncate"><i class="bi bi-hdd-network me-2 text-info"></i>{{ item.device.device_name }}</span>
+                <span
+                    id="status-{{ item.device.device_id }}"
+                    class="badge badge-offline">
+                    Offline
+                </span>
+            </div>
+
+            <div class="card-body pt-0">
+                <div class="text-muted small mb-2">ID: <span class="font-monospace text-info">{{ item.device.device_id }}</span></div>
+
+                <div class="my-3 text-center p-2 rounded-3"
+                    style="background: rgba(0,0,0,0.25); border:1px solid var(--grid-border);">
+
+                    <span class="metric-label d-block mb-1">Current Load</span>
+
+                    <div class="device-power-val"
+                        id="power-{{ item.device.device_id }}">
+                        --
+                    </div>
+
+                </div>
+
+                <div class="row g-2 text-center">
+
+                    <div class="col-6">
+                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
+                            <span class="metric-label d-block">Voltage</span>
+
+                            <span class="metric-value text-info"
+                                id="voltage-{{ item.device.device_id }}">
+                                --
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
+                            <span class="metric-label d-block">Current</span>
+
+                            <span class="metric-value text-info" id="current-{{ item.device.device_id }}">
+                                --
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
+                            <span class="metric-label d-block">Energy</span>
+
+                            <span class="metric-value text-info" id="energy-{{ item.device.device_id }}">
+                                --
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
+                            <span class="metric-label d-block">PF</span>
+
+                            <span class="metric-value text-info" id="pf-{{ item.device.device_id }}">
+                                --
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
+    {% endfor %}
+    </div>
 
+
+    <!-- Multi-Device Power Chart Card -->
     <div class="card shadow-sm">
-        <div class="card-header header-green py-3">
-            <i class="bi bi-lightning-charge text-success me-2"></i> Live Power Consumption Grid
+        <div class="card-header header-green py-3 d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-graph-up-arrow text-success me-2"></i> Multi-Device Power Consumption (W)</span>
+            <span class="badge bg-black text-info border border-info border-opacity-50"><i class="bi bi-record-fill text-danger me-1 animate-pulse"></i> Live Grid Stream</span>
         </div>
-        <div class="card-body" style="background-color: rgba(0,0,0,0.15);">
+        <div class="card-body" style="background-color: rgba(5, 8, 15, 0.4);">
             <canvas id="powerChart"></canvas>
         </div>
     </div>
 
+    <!-- Telemetry Table Card -->
     <div class="card shadow-sm">
         <div class="card-header header-dark py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span><i class="bi bi-activity text-warning me-2"></i> Latest Telemetry Readings</span>
-            <input type="text" id="tableSearch" class="form-control search-control form-control-sm" placeholder="🔍 Filter by date/time..." oninput="handleSearch()">
+            <span><i class="bi bi-activity text-warning me-2"></i> Telemetry Logs</span>
+            <input type="text" id="tableSearch" class="form-control search-control form-control-sm" placeholder="🔍 Filter by time..." oninput="handleSearch()">
         </div>
         <div class="card-body p-0">
-            
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle mb-0">
                     <thead>
@@ -247,24 +340,27 @@
                             <th>Energy</th>
                             <th>PF</th>
                             <th>Peak</th>
-                            <th class="pe-4">Time</th>
+                            <th class="pe-4 text-end">Timestamp</th>
                         </tr>
                     </thead>
                     <tbody id="readingTable"></tbody>
                 </table>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center p-3 border-top bg-black bg-opacity-20 flex-wrap gap-3" style="border-top-color: var(--grid-border) !important;">
+            <div class="d-flex justify-content-between align-items-center p-3 border-top flex-wrap gap-3" style="border-top-color: var(--grid-border) !important; background: rgba(10, 14, 23, 0.4);">
                 <div class="text-muted small fw-medium" id="paginationInfo">
                     Showing 0 to 0 of 0 entries
                 </div>
                 <nav aria-label="Table navigation">
-                    <ul class="pagination pagination-sm align-items-center" id="paginationControls"></ul>
+                    <ul class="pagination pagination-sm align-items-center mb-0" id="paginationControls"></ul>
                 </nav>
             </div>
-
         </div>
     </div>
+
+    <!-- Individual Device Real-Time Cards -->
+
+
 </div>
 
 <script>
@@ -274,69 +370,57 @@ let readingsData = [];
 let searchQuery = "";
 let currentPage = 1;
 const rowsPerPage = 5; 
+const maxTimePoints = 15;
+
+const neonColors = [
+    "#00f0ff", // Neon Blue
+    "#39ff14", // Neon Green
+    "#ff3131", // Neon Red
+    "#ff9900", // Neon Orange
+    "#e066ff", // Neon Purple
+    "#ffff00"  // Neon Yellow
+];
 
 const powerChart = new Chart(ctx, {
     type: "line",
     data: {
-        labels: [],
-        datasets: [
-            {
-                label: "Voltage (V)",
-                data: [],
-                borderColor: "#00f0ff",
-                backgroundColor: "rgba(0, 240, 255, 0.05)",
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                fill: true
-            },
-            {
-                label: "Current (A)",
-                data: [],
-                borderColor: "#39ff14",
-                backgroundColor: "rgba(57, 255, 20, 0.05)",
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                fill: true
-            },
-            {
-                label: "Power (W)",
-                data: [],
-                borderColor: "#ff3131",
-                backgroundColor: "rgba(255, 49, 49, 0.05)",
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                fill: true
-            }
-        ]
+        labels: [], 
+        datasets: [] 
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
         animation: {
-            duration: 500,
-            easing: 'easeInOutQuad'
+            duration: 300,
+            easing: 'linear'
         },
         scales: {
-            y: {
-                beginAtZero: true,
-                grid: { color: "rgba(34, 46, 75, 0.5)" },
+            x: {
+                grid: { color: "rgba(34, 46, 75, 0.4)" },
                 ticks: { color: "#8b9bb4" }
             },
-            x: {
-                grid: { display: false },
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Power (Watts)', color: '#8b9bb4', font: { size: 12 } },
+                grid: { color: "rgba(34, 46, 75, 0.4)" },
                 ticks: { color: "#8b9bb4" }
             }
         },
         plugins: {
             legend: {
                 position: 'top',
-                labels: { color: "#f8f9fa", boxWidth: 12, usePointStyle: true, pointStyle: 'circle', padding: 20 }
+                labels: { color: "#f8f9fa", boxWidth: 12, usePointStyle: true, pointStyle: 'circle', padding: 15 }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(18, 24, 38, 0.95)',
+                borderColor: '#222e4b',
+                borderWidth: 1,
+                titleColor: '#00f0ff',
+                padding: 12
             }
         }
     }
@@ -386,7 +470,7 @@ function renderTableAndPagination() {
             <td class="text-white-50">${item.energy} kWh</td>
             <td class="text-muted">${item.pf}</td>
             <td class="text-warning fw-medium">${item.peak} W</td>
-            <td class="pe-4 text-muted small">${item.time}</td>
+            <td class="pe-4 text-end text-muted small font-monospace">${item.time}</td>
         `;
         fragment.appendChild(tr);
     });
@@ -394,7 +478,6 @@ function renderTableAndPagination() {
 
     infoText.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} entries`;
 
-    // --- IMMACULATE TRUNCATED PAGINATION BAR CALCULATIONS ---
     const maxVisiblePages = 3; 
     let startPage = Math.max(1, currentPage - 1);
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
@@ -403,13 +486,11 @@ function renderTableAndPagination() {
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
 
-    // Previous Arrow Button (&laquo;)
     const prevLi = document.createElement('li');
     prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
     prevLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(${currentPage - 1})">&laquo;</button>`;
     controls.appendChild(prevLi);
 
-    // First Page Anchor if hidden behind break
     if (startPage > 1) {
         const firstLi = document.createElement('li');
         firstLi.className = `page-item`;
@@ -424,7 +505,6 @@ function renderTableAndPagination() {
         }
     }
 
-    // Main Numeric Page Loops
     for (let i = startPage; i <= endPage; i++) {
         const pageLi = document.createElement('li');
         pageLi.className = `page-item ${currentPage === i ? 'active' : ''}`;
@@ -432,7 +512,6 @@ function renderTableAndPagination() {
         controls.appendChild(pageLi);
     }
 
-    // Last Page Anchor if hidden behind trailing break
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             const ellipsisLi = document.createElement('li');
@@ -447,7 +526,6 @@ function renderTableAndPagination() {
         controls.appendChild(lastLi);
     }
 
-    // Next Arrow Button (&raquo;)
     const nextLi = document.createElement('li');
     nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
     nextLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(${currentPage + 1})">&raquo;</button>`;
@@ -467,25 +545,140 @@ async function loadReadings() {
 
         readingsData = data;
 
-        powerChart.data.labels.length = 0;
-        powerChart.data.datasets[0].data.length = 0;
-        powerChart.data.datasets[1].data.length = 0;
-        powerChart.data.datasets[2].data.length = 0;
+        if (data.length > 0) {
+            const latestTime = data[0].time ? (data[0].time.split(' ')[1] || data[0].time) : new Date().toLocaleTimeString();
 
-        data.forEach(item => {
-            powerChart.data.labels.push(item.device_name);
-            powerChart.data.datasets[0].data.push(item.voltage);
-            powerChart.data.datasets[1].data.push(item.current);
-            powerChart.data.datasets[2].data.push(item.power);
-        });
+            powerChart.data.labels.push(latestTime);
+            if (powerChart.data.labels.length > maxTimePoints) {
+                powerChart.data.labels.shift();
+            }
+
+            data.forEach((item) => {
+                let dataset = powerChart.data.datasets.find(ds => ds.label === item.device_name);
+
+                if (!dataset) {
+                    const colorIndex = powerChart.data.datasets.length % neonColors.length;
+                    const strokeColor = neonColors[colorIndex];
+
+                    dataset = {
+                        label: item.device_name,
+                        data: new Array(powerChart.data.labels.length - 1).fill(null),
+                        borderColor: strokeColor,
+                        backgroundColor: strokeColor + '15',
+                        tension: 0.35,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 6,
+                        fill: false
+                    };
+                    powerChart.data.datasets.push(dataset);
+                }
+
+                dataset.data.push(parseFloat(item.power) || 0);
+
+                if (dataset.data.length > maxTimePoints) {
+                    dataset.data.shift();
+                }
+            });
+
+            powerChart.update();
+        }
 
         renderTableAndPagination();
-        powerChart.update();
         
     } catch (error) {
         console.error("Grid telemetry acquisition failed:", error);
     }
 }
+
+async function updateCards(){
+
+    const response = await fetch("/latest/");
+    const devices = await response.json();
+
+    devices.forEach(device=>{
+
+        document.getElementById("power-"+device.device_id).innerHTML =
+            device.power ?? "--";
+
+        document.getElementById("voltage-"+device.device_id).innerHTML =
+            (device.voltage ?? "--") + " V";
+
+        document.getElementById("current-"+device.device_id).innerHTML =
+            (device.current ?? "--") + " A";
+
+        document.getElementById("energy-"+device.device_id).innerHTML =
+            (device.energy ?? "--") + " kWh";
+
+        document.getElementById("pf-"+device.device_id).innerHTML =
+            device.pf ?? "--";
+
+        const badge = document.getElementById("status-"+device.device_id);
+
+        if(device.status=="Online"){
+            badge.innerHTML="Active";
+            badge.className="badge badge-online";
+        }else{
+            badge.innerHTML="Offline";
+            badge.className="badge badge-offline";
+        }
+
+    });
+
+}
+
+async function updateDeviceCards() {
+
+    const response = await fetch("/latest/");
+    const devices = await response.json();
+
+    devices.forEach(device => {
+
+        const power = document.getElementById(`power-${device.device_id}`);
+        const voltage = document.getElementById(`voltage-${device.device_id}`);
+        const current = document.getElementById(`current-${device.device_id}`);
+        const energy = document.getElementById(`energy-${device.device_id}`);
+        const pf = document.getElementById(`pf-${device.device_id}`);
+        const status = document.getElementById(`status-${device.device_id}`);
+
+        if (!power) return;
+
+        power.innerHTML = device.power ? `${device.power} <span class="fs-6 text-muted">W</span>` : "--";
+
+        voltage.textContent = device.voltage ? `${device.voltage} V` : "--";
+
+        current.textContent = device.current ? `${device.current} A` : "--";
+
+        energy.textContent = device.energy ? `${device.energy} kWh` : "--";
+
+        pf.textContent = device.pf ?? "--";
+
+        if (device.status === "Online") {
+
+            status.textContent = "Active";
+            status.classList.remove("badge-offline");
+            status.classList.add("badge-online");
+
+        } else {
+
+            status.textContent = "Offline";
+            status.classList.remove("badge-online");
+            status.classList.add("badge-offline");
+
+        }
+
+    });
+
+}
+
+updateDeviceCards();
+
+setInterval(updateDeviceCards, 5000);
+
+updateCards();
+
+setInterval(updateCards,5000);
+
 
 loadReadings();
 setInterval(loadReadings, 5000);

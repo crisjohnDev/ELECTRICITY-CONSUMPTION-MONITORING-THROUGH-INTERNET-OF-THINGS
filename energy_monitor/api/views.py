@@ -60,35 +60,63 @@ def register_device(request):
     return render(request, "devices/register_device.html")
 
 def device_list(request):
+    devices = []
 
-    devices = Device.objects.all()
+    for device in Device.objects.all():
 
-    return render(
-        request,
-        "devices/device_list.html",
-        {
-            "devices": devices
-        }
-    )
+        latest = (
+            EnergyReading.objects
+            .filter(device=device)
+            .order_by("-created_at")
+            .first()
+        )
+
+        devices.append({
+            "device": device,
+            "reading": latest,
+        })
+
+    return render(request, "devices/device_list.html", {
+        "devices": devices
+    })
 
 def latest_readings(request):
-
-    readings = EnergyReading.objects.select_related("device").order_by("-created_at")
-
     data = []
 
-    for reading in readings:
+    for device in Device.objects.all():
 
-        data.append({
-            "device_id": reading.device.device_id,
-            "device_name": reading.device.device_name,
-            "voltage": reading.voltage,
-            "current": reading.current,
-            "power": reading.power,
-            "energy": reading.energy,
-            "pf": reading.pf,
-            "peak": reading.peak,
-            "time": reading.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-        })
+        reading = (
+            EnergyReading.objects
+            .filter(device=device)
+            .order_by("-created_at")
+            .first()
+        )
+
+        if reading:
+            data.append({
+                "device_id": device.device_id,
+                "device_name": device.device_name,
+                "voltage": reading.voltage,
+                "current": reading.current,
+                "power": reading.power,
+                "energy": reading.energy,
+                "pf": reading.pf,
+                "peak": reading.peak,
+                "time": reading.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "status": "Online",
+            })
+        else:
+            data.append({
+                "device_id": device.device_id,
+                "device_name": device.device_name,
+                "voltage": None,
+                "current": None,
+                "power": None,
+                "energy": None,
+                "pf": None,
+                "peak": None,
+                "time": None,
+                "status": "Offline",
+            })
 
     return JsonResponse(data, safe=False)
