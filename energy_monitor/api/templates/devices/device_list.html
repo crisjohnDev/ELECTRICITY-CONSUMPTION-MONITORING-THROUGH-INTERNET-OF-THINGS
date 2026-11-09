@@ -1,8 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Power Monitoring Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,7 +16,7 @@
     <style>
         :root {
             --bg-main: #070a12;
-            --bg-card: rgba(18, 24, 38, 0.75);
+            --bg-card: rgba(18, 24, 38, 0.85);
             --bg-card-header: rgba(26, 35, 58, 0.85);
             --text-main: #f8f9fa;
             --text-muted: #8b9bb4;
@@ -23,20 +26,19 @@
             --neon-orange: #ff9900;
             --neon-purple: #b026ff;
             --grid-border: rgba(34, 46, 75, 0.8);
-            --glow-blue: rgba(0, 240, 255, 0.15);
         }
 
         body {
             background-color: var(--bg-main);
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(176, 38, 255, 0.05) 0%, transparent 40%),
-                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(0,240,255,.05), transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(176,38,255,.05), transparent 40%),
+                linear-gradient(rgba(0,240,255,.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,240,255,.02) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
             background-attachment: fixed;
             min-height: 100vh;
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            font-family: system-ui, sans-serif;
             color: var(--text-main);
         }
 
@@ -46,642 +48,1083 @@
             margin-bottom: 24px;
             background: var(--bg-card);
             backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0,0,0,.45);
         }
 
         .card-header {
-            background-color: var(--bg-card-header) !important;
+            background: var(--bg-card-header) !important;
             border-bottom: 1px solid var(--grid-border);
-            border-top-left-radius: 14px !important;
-            border-top-right-radius: 14px !important;
+            color: white !important;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            color: var(--text-main) !important;
+            padding: 15px 18px;
         }
 
         .header-blue { border-left: 4px solid var(--neon-blue); }
         .header-green { border-left: 4px solid var(--neon-green); }
-        .header-dark { border-left: 4px solid var(--neon-purple); }
+        .header-purple { border-left: 4px solid var(--neon-purple); }
 
-        canvas {
-            height: 380px !important;
-        }
-
-        .table {
-            color: var(--text-main);
-            --bs-table-bg: transparent;
-            --bs-table-hover-bg: rgba(0, 240, 255, 0.03);
-            --bs-table-striped-bg: rgba(255, 255, 255, 0.015);
-            border-color: var(--grid-border);
-        }
-
-        .table thead th {
-            background-color: rgba(10, 14, 23, 0.6) !important;
-            color: var(--text-muted);
-            border-bottom: 2px solid var(--grid-border);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.72rem;
-            letter-spacing: 1.2px;
-        }
-
-        .badge {
-            padding: 0.45em 0.75em;
-            border-radius: 6px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .badge-volt { background: rgba(0, 240, 255, 0.1); color: var(--neon-blue); border: 1px solid rgba(0, 240, 255, 0.3); }
-        .badge-amp { background: rgba(57, 255, 20, 0.1); color: var(--neon-green); border: 1px solid rgba(57, 255, 20, 0.3); }
-        .badge-watt { background: rgba(255, 49, 49, 0.1); color: var(--neon-red); border: 1px solid rgba(255, 49, 49, 0.3); }
-        
-        .badge-online { 
-            background: rgba(57, 255, 20, 0.12); color: var(--neon-green); border: 1px solid rgba(57, 255, 20, 0.4);
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.25);
-        }
-        .badge-offline { 
-            background: rgba(255, 49, 49, 0.12); color: var(--neon-red); border: 1px solid rgba(255, 49, 49, 0.4);
-            box-shadow: 0 0 10px rgba(255, 49, 49, 0.25);
-        }
-
-        .search-control {
-            max-width: 300px;
-            border-radius: 8px;
-            background-color: rgba(7, 10, 18, 0.8);
-            border: 1px solid var(--grid-border);
-            padding: 0.4rem 0.85rem;
-            color: var(--text-main);
-            transition: all 0.25s ease;
-        }
-        
-        .search-control:focus {
-            background-color: rgba(7, 10, 18, 0.95);
-            color: var(--text-main);
-            border-color: var(--neon-blue);
-            outline: 0;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
-        }
-
-        .page-link {
-            border: 1px solid var(--grid-border);
-            background-color: transparent;
-            color: var(--text-muted);
-            padding: 0.4rem 0.75rem;
-            margin: 0 2px;
-            border-radius: 6px !important;
-            transition: all 0.2s ease;
-        }
-
-        .page-link:hover {
-            background-color: var(--bg-card-header);
-            color: var(--neon-blue);
-            border-color: var(--neon-blue);
-        }
-
-        .page-item.active .page-link {
-            background-color: rgba(0, 240, 255, 0.15);
-            color: var(--neon-blue);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
-        }
-
-        .page-item.disabled .page-link {
-            background-color: transparent;
-            border-color: var(--grid-border);
-            opacity: 0.25;
-            color: var(--text-muted);
-        }
-
-        .page-text-span {
-            padding: 0.4rem 0.5rem;
-            color: var(--text-muted);
-            display: inline-block;
-        }
-
-        .btn-add-device {
-            border-radius: 8px;
-            padding: 0.55rem 1.35rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #00f0ff 0%, #0072ff 100%);
-            color: #050b14 !important;
-            border: none;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
-            transition: all 0.25s ease;
-        }
-
-        .btn-add-device:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
-            opacity: 0.95;
-        }
-
-        /* Upgraded Device Metric Cards */
         .device-card {
-            background: rgba(18, 24, 38, 0.85);
-            border: 1px solid var(--grid-border);
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: .3s ease;
         }
 
         .device-card:hover {
             border-color: var(--neon-blue);
             transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 240, 255, 0.15);
+            box-shadow: 0 8px 24px rgba(0,240,255,.15);
         }
 
         .device-power-val {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--neon-blue);
-            text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            text-shadow: 0 0 12px rgba(0,240,255,.4);
         }
 
         .metric-label {
-            font-size: 0.75rem;
+            font-size: .72rem;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: .8px;
             color: var(--text-muted);
         }
 
         .metric-value {
             font-weight: 600;
-            color: var(--text-main);
+            color: white;
         }
 
         .text-muted {
             color: var(--text-muted) !important;
         }
+
+        .badge {
+            padding: .45em .75em;
+            border-radius: 6px;
+        }
+
+        .badge-online {
+            background: rgba(57,255,20,.12);
+            color: var(--neon-green);
+            border: 1px solid rgba(57,255,20,.4);
+        }
+
+        .badge-offline {
+            background: rgba(255,49,49,.12);
+            color: var(--neon-red);
+            border: 1px solid rgba(255,49,49,.4);
+        }
+
+        .badge-volt {
+            background: rgba(0,240,255,.1);
+            color: var(--neon-blue);
+        }
+
+        .badge-amp {
+            background: rgba(57,255,20,.1);
+            color: var(--neon-green);
+        }
+
+        .badge-watt {
+            background: rgba(255,49,49,.1);
+            color: var(--neon-red);
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #0b1220;
+            border: 1px solid var(--grid-border);
+            color: white;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #0b1220;
+            color: white;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0,240,255,.2);
+        }
+
+        .form-select option {
+            background: #0b1220;
+            color: white;
+        }
+
+        .btn-neon {
+            background: linear-gradient(135deg, #00f0ff, #0072ff);
+            color: #050b14;
+            border: none;
+            font-weight: 700;
+        }
+
+        .btn-neon:hover {
+            color: #050b14;
+            opacity: .85;
+        }
+
+        .table {
+            color: white;
+            --bs-table-bg: transparent;
+            --bs-table-hover-bg: rgba(0,240,255,.04);
+            border-color: var(--grid-border);
+        }
+
+        .table thead th {
+            background: rgba(10,14,23,.8);
+            color: var(--text-muted);
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        canvas {
+            max-height: 380px;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: .85rem;
+        }
+
+        .loading-text {
+            color: var(--neon-blue);
+        }
+
+        .history-summary {
+            background: rgba(0,240,255,.04);
+            border: 1px solid var(--grid-border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .history-summary h4 {
+            color: var(--neon-blue);
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .device-power-val {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container-fluid max-ww px-md-5 mt-4 pb-5">
+<div class="container-fluid px-md-5 mt-4 pb-5">
 
-    <!-- Header Section -->
+    <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+
         <div>
-            <h2 class="mb-1 fw-bold text-white d-flex align-items-center gap-2" style="text-shadow: 0 0 16px rgba(0,240,255,0.4);">
-                <i class="bi bi-lightning-charge-fill text-info"></i> Power Monitoring Dashboard
+            <h2 class="fw-bold text-white mb-1">
+                <i class="bi bi-lightning-charge-fill text-info"></i>
+                Power Monitoring Dashboard
             </h2>
-            <p class="text-muted small mb-0">Real-time telemetric grid analysis & device management</p>
+
+            <p class="section-subtitle mb-0">
+                Real-time energy monitoring and historical analysis
+            </p>
         </div>
-        <a href="{% url 'register_device' %}" class="btn btn-primary btn-add-device d-flex align-items-center gap-2">
-            <i class="bi bi-plus-lg fw-bold"></i> Add Device
+
+        <a href="{% url 'register_device' %}" class="btn btn-neon px-4 py-2">
+            <i class="bi bi-plus-lg"></i>
+            Add Device
         </a>
+
     </div>
 
-    <!-- Registered Devices Table Card -->
+
+    <!-- LIVE DEVICE CARDS -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold">
+            <i class="bi bi-hdd-network text-info"></i>
+            Registered Devices
+        </h5>
+
+        <span class="badge badge-online">
+            <i class="bi bi-circle-fill"></i>
+            LIVE MONITORING
+        </span>
+    </div>
 
     <div class="row g-3 mb-4">
-    {% for item in devices %}
-    <div class="col-xl-3 col-lg-4 col-md-6">
-        <div class="card device-card h-100 shadow-sm mb-0">
-            <div class="card-header border-0 bg-transparent py-3 d-flex justify-content-between align-items-center">
-                <span class="fw-bold text-white text-truncate"><i class="bi bi-hdd-network me-2 text-info"></i>{{ item.device.device_name }}</span>
-                <span
-                    id="status-{{ item.device.device_id }}"
-                    class="badge badge-offline">
-                    Offline
+
+        {% for item in devices %}
+
+        <div class="col-xl-3 col-lg-4 col-md-6">
+
+            <div class="card device-card h-100 mb-0">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <span class="text-truncate">
+                        <i class="bi bi-cpu text-info me-2"></i>
+                        {{ item.device.device_name }}
+                    </span>
+
+                    <span
+                        class="badge badge-offline device-status"
+                        data-device-id="{{ item.device.device_id }}">
+                        Offline
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="small text-muted mb-3">
+                        Device ID:
+                        <span class="text-info font-monospace">
+                            {{ item.device.device_id }}
+                        </span>
+                    </div>
+
+                    <div class="text-center p-3 rounded mb-3"
+                         style="background:rgba(0,0,0,.25);border:1px solid var(--grid-border)">
+
+                        <span class="metric-label d-block">
+                            Current Load
+                        </span>
+
+                        <div class="device-power-val device-power"
+                             data-device-id="{{ item.device.device_id }}">
+                            --
+                        </div>
+
+                        <small class="text-muted">Watts</small>
+
+                    </div>
+
+                    <div class="row g-2 text-center">
+
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:rgba(255,255,255,.02)">
+                                <span class="metric-label d-block">Voltage</span>
+                                <span class="metric-value device-voltage"
+                                      data-device-id="{{ item.device.device_id }}">--</span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:rgba(255,255,255,.02)">
+                                <span class="metric-label d-block">Current</span>
+                                <span class="metric-value device-current"
+                                      data-device-id="{{ item.device.device_id }}">--</span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:rgba(255,255,255,.02)">
+                                <span class="metric-label d-block">Energy</span>
+                                <span class="metric-value device-energy"
+                                      data-device-id="{{ item.device.device_id }}">--</span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background:rgba(255,255,255,.02)">
+                                <span class="metric-label d-block">Power Factor</span>
+                                <span class="metric-value device-pf"
+                                      data-device-id="{{ item.device.device_id }}">--</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+            <div class="card p-4 text-center text-muted">
+                No registered devices found.
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- LIVE POWER CHART -->
+    <div class="card">
+
+        <div class="card-header header-green d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <span>
+                <i class="bi bi-graph-up-arrow text-success me-2"></i>
+                Live Power Consumption
+            </span>
+
+            <span class="badge badge-online">
+                <i class="bi bi-record-fill"></i>
+                LIVE
+            </span>
+
+        </div>
+
+        <div class="card-body">
+            <canvas id="livePowerChart"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- HISTORICAL MONITORING -->
+    <div class="card">
+
+        <div class="card-header header-purple">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <span>
+                    <i class="bi bi-clock-history text-info me-2"></i>
+                    Historical Energy Monitoring
                 </span>
+
+                <span class="badge bg-dark border border-info text-info">
+                    HISTORICAL DATA
+                </span>
+
             </div>
 
-            <div class="card-body pt-0">
-                <div class="text-muted small mb-2">ID: <span class="font-monospace text-info">{{ item.device.device_id }}</span></div>
+        </div>
 
-                <div class="my-3 text-center p-2 rounded-3"
-                    style="background: rgba(0,0,0,0.25); border:1px solid var(--grid-border);">
+        <div class="card-body">
 
-                    <span class="metric-label d-block mb-1">Current Load</span>
+            <p class="section-subtitle mb-4">
+                Analyze your device readings by minute, hour, or day.
+            </p>
 
-                    <div class="device-power-val"
-                        id="power-{{ item.device.device_id }}">
-                        --
-                    </div>
+            <!-- FILTERS -->
+            <div class="row g-3 mb-4">
+
+                <div class="col-lg-3 col-md-6">
+
+                    <label class="form-label small text-muted">
+                        Select Device
+                    </label>
+
+                    <select id="historyDevice" class="form-select">
+
+                        <option value="">All Devices</option>
+
+                        {% for item in devices %}
+                        <option value="{{ item.device.device_id }}">
+                            {{ item.device.device_name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
 
                 </div>
 
-                <div class="row g-2 text-center">
+                <div class="col-lg-2 col-md-6">
 
-                    <div class="col-6">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
-                            <span class="metric-label d-block">Voltage</span>
+                    <label class="form-label small text-muted">
+                        Group Interval
+                    </label>
 
-                            <span class="metric-value text-info"
-                                id="voltage-{{ item.device.device_id }}">
-                                --
-                            </span>
-                        </div>
-                    </div>
+                    <select id="historyInterval" class="form-select">
 
-                    <div class="col-6">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
-                            <span class="metric-label d-block">Current</span>
+                        <option value="minute">Per Minute</option>
+                        <option value="hour" selected>Per Hour</option>
+                        <option value="day">Per Day</option>
 
-                            <span class="metric-value text-info" id="current-{{ item.device.device_id }}">
-                                --
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="col-6">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
-                            <span class="metric-label d-block">Energy</span>
-
-                            <span class="metric-value text-info" id="energy-{{ item.device.device_id }}">
-                                --
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="col-6">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
-                            <span class="metric-label d-block">PF</span>
-
-                            <span class="metric-value text-info" id="pf-{{ item.device.device_id }}">
-                                --
-                            </span>
-                        </div>
-                    </div>
+                    </select>
 
                 </div>
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label small text-muted">
+                        Start Date
+                    </label>
+
+                    <input type="date" id="historyStartDate" class="form-control">
+
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="form-label small text-muted">
+                        End Date
+                    </label>
+
+                    <input type="date" id="historyEndDate" class="form-control">
+
+                </div>
+
+                <div class="col-lg-3 col-md-12 d-flex align-items-end">
+
+                    <button class="btn btn-neon w-100" id="historySearchBtn" onclick="loadHistory()">
+
+                        <i class="bi bi-search me-1"></i>
+                        Generate Report
+
+                    </button>
+
+                </div>
+
             </div>
-        </div>
-    </div>
-    {% endfor %}
-    </div>
 
 
-    <!-- Multi-Device Power Chart Card -->
-    <div class="card shadow-sm">
-        <div class="card-header header-green py-3 d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-graph-up-arrow text-success me-2"></i> Multi-Device Power Consumption (W)</span>
-            <span class="badge bg-black text-info border border-info border-opacity-50"><i class="bi bi-record-fill text-danger me-1 animate-pulse"></i> Live Grid Stream</span>
-        </div>
-        <div class="card-body" style="background-color: rgba(5, 8, 15, 0.4);">
-            <canvas id="powerChart"></canvas>
-        </div>
-    </div>
+            <!-- HISTORY STATUS -->
+            <div id="historyStatus" class="small text-muted mb-3">
+                Select your filters and click Generate Report.
+            </div>
 
-    <!-- Telemetry Table Card -->
-    <div class="card shadow-sm">
-        <div class="card-header header-dark py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span><i class="bi bi-activity text-warning me-2"></i> Telemetry Logs</span>
-            <input type="text" id="tableSearch" class="form-control search-control form-control-sm" placeholder="🔍 Filter by time..." oninput="handleSearch()">
-        </div>
-        <div class="card-body p-0">
+
+            <!-- SUMMARY -->
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-3 col-6">
+                    <div class="history-summary">
+                        <span class="metric-label">Records</span>
+                        <h4 id="historyRecordCount" class="mb-0">0</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <div class="history-summary">
+                        <span class="metric-label">Average Power</span>
+                        <h4 id="historyAveragePower" class="mb-0">0 W</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <div class="history-summary">
+                        <span class="metric-label">Average Voltage</span>
+                        <h4 id="historyAverageVoltage" class="mb-0">0 V</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-6">
+                    <div class="history-summary">
+                        <span class="metric-label">Peak Power</span>
+                        <h4 id="historyPeakPower" class="mb-0">0 W</h4>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- HISTORICAL CHART -->
+            <div class="mb-4">
+
+                <h6 class="fw-bold mb-3">
+                    <i class="bi bi-bar-chart-line text-info me-2"></i>
+                    Historical Power Consumption
+                </h6>
+
+                <canvas id="historyChart"></canvas>
+
+            </div>
+
+
+            <!-- HISTORICAL TABLE -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+                <h6 class="fw-bold mb-0">
+                    <i class="bi bi-table text-info me-2"></i>
+                    Historical Reading Records
+                </h6>
+
+                <input
+                    type="text"
+                    id="historySearch"
+                    class="form-control"
+                    style="max-width:250px"
+                    placeholder="Search device or time..."
+                    oninput="renderHistoryTable()">
+
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle mb-0">
+
+                <table class="table table-hover align-middle">
+
                     <thead>
                         <tr>
-                            <th class="ps-4">Device</th>
+                            <th>Device</th>
                             <th>Voltage</th>
                             <th>Current</th>
                             <th>Power</th>
                             <th>Energy</th>
                             <th>PF</th>
                             <th>Peak</th>
-                            <th class="pe-4 text-end">Timestamp</th>
+                            <th>Timestamp</th>
                         </tr>
                     </thead>
-                    <tbody id="readingTable"></tbody>
+
+                    <tbody id="historyTable">
+
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No historical data loaded.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
                 </table>
+
             </div>
 
-            <div class="d-flex justify-content-between align-items-center p-3 border-top flex-wrap gap-3" style="border-top-color: var(--grid-border) !important; background: rgba(10, 14, 23, 0.4);">
-                <div class="text-muted small fw-medium" id="paginationInfo">
-                    Showing 0 to 0 of 0 entries
-                </div>
-                <nav aria-label="Table navigation">
-                    <ul class="pagination pagination-sm align-items-center mb-0" id="paginationControls"></ul>
-                </nav>
-            </div>
         </div>
+
     </div>
-
-    <!-- Individual Device Real-Time Cards -->
-
 
 </div>
 
-<script>
-const ctx = document.getElementById("powerChart");
 
-let readingsData = [];
-let searchQuery = "";
-let currentPage = 1;
-const rowsPerPage = 5; 
-const maxTimePoints = 15;
+<script>
+
+// =====================================================
+// CHART CONFIGURATION
+// =====================================================
 
 const neonColors = [
-    "#00f0ff", // Neon Blue
-    "#39ff14", // Neon Green
-    "#ff3131", // Neon Red
-    "#ff9900", // Neon Orange
-    "#e066ff", // Neon Purple
-    "#ffff00"  // Neon Yellow
+    "#00f0ff",
+    "#39ff14",
+    "#ff3131",
+    "#ff9900",
+    "#b026ff",
+    "#ffff00"
 ];
 
-const powerChart = new Chart(ctx, {
-    type: "line",
-    data: {
-        labels: [], 
-        datasets: [] 
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            mode: 'index',
-            intersect: false,
+
+// =====================================================
+// LIVE CHART
+// =====================================================
+
+const liveChart = new Chart(
+    document.getElementById("livePowerChart"),
+    {
+        type: "line",
+
+        data: {
+            labels: [],
+            datasets: []
         },
-        animation: {
-            duration: 300,
-            easing: 'linear'
-        },
-        scales: {
-            x: {
-                grid: { color: "rgba(34, 46, 75, 0.4)" },
-                ticks: { color: "#8b9bb4" }
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                mode: "index",
+                intersect: false
             },
-            y: {
-                beginAtZero: true,
-                title: { display: true, text: 'Power (Watts)', color: '#8b9bb4', font: { size: 12 } },
-                grid: { color: "rgba(34, 46, 75, 0.4)" },
-                ticks: { color: "#8b9bb4" }
-            }
-        },
-        plugins: {
-            legend: {
-                position: 'top',
-                labels: { color: "#f8f9fa", boxWidth: 12, usePointStyle: true, pointStyle: 'circle', padding: 15 }
+
+            scales: {
+                x: {
+                    ticks: { color: "#8b9bb4" },
+                    grid: { color: "rgba(34,46,75,.4)" }
+                },
+
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "Power (Watts)",
+                        color: "#8b9bb4"
+                    },
+                    ticks: { color: "#8b9bb4" },
+                    grid: { color: "rgba(34,46,75,.4)" }
+                }
             },
-            tooltip: {
-                backgroundColor: 'rgba(18, 24, 38, 0.95)',
-                borderColor: '#222e4b',
-                borderWidth: 1,
-                titleColor: '#00f0ff',
-                padding: 12
+
+            plugins: {
+                legend: {
+                    labels: { color: "#f8f9fa" }
+                }
             }
         }
     }
-});
+);
 
-function handleSearch() {
-    searchQuery = document.getElementById("tableSearch").value.toLowerCase().trim();
-    currentPage = 1; 
-    renderTableAndPagination();
-}
 
-function renderTableAndPagination() {
-    const tableBody = document.getElementById("readingTable");
-    const infoText = document.getElementById("paginationInfo");
-    const controls = document.getElementById("paginationControls");
+// =====================================================
+// HISTORICAL CHART
+// =====================================================
 
-    tableBody.innerHTML = "";
-    controls.innerHTML = "";
+const historyChart = new Chart(
+    document.getElementById("historyChart"),
+    {
+        type: "line",
 
-    const filteredData = readingsData.filter(item => 
-        item.time && item.time.toLowerCase().includes(searchQuery)
-    );
+        data: {
+            labels: [],
+            datasets: []
+        },
 
-    const totalItems = filteredData.length;
-    if (totalItems === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center p-4 text-muted">No telemetry logged matching selected time frame.</td></tr>`;
-        infoText.textContent = "Showing 0 to 0 of 0 entries";
-        return;
-    }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
 
-    const totalPages = Math.ceil(totalItems / rowsPerPage);
-    if (currentPage > totalPages) currentPage = totalPages;
-    if (currentPage < 1) currentPage = 1;
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
 
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
-    const paginatedItems = filteredData.slice(startIndex, endIndex);
+            scales: {
+                x: {
+                    ticks: { color: "#8b9bb4" },
+                    grid: { color: "rgba(34,46,75,.4)" }
+                },
 
-    const fragment = document.createDocumentFragment();
-    paginatedItems.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="ps-4 fw-bold text-white">${item.device_name}</td>
-            <td><span class="badge badge-volt">${item.voltage} V</span></td>
-            <td><span class="badge badge-amp">${item.current} A</span></td>
-            <td><span class="badge badge-watt">${item.power} W</span></td>
-            <td class="text-white-50">${item.energy} kWh</td>
-            <td class="text-muted">${item.pf}</td>
-            <td class="text-warning fw-medium">${item.peak} W</td>
-            <td class="pe-4 text-end text-muted small font-monospace">${item.time}</td>
-        `;
-        fragment.appendChild(tr);
-    });
-    tableBody.appendChild(fragment);
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "Power (Watts)",
+                        color: "#8b9bb4"
+                    },
+                    ticks: { color: "#8b9bb4" },
+                    grid: { color: "rgba(34,46,75,.4)" }
+                }
+            },
 
-    infoText.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} entries`;
-
-    const maxVisiblePages = 3; 
-    let startPage = Math.max(1, currentPage - 1);
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    const prevLi = document.createElement('li');
-    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-    prevLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(${currentPage - 1})">&laquo;</button>`;
-    controls.appendChild(prevLi);
-
-    if (startPage > 1) {
-        const firstLi = document.createElement('li');
-        firstLi.className = `page-item`;
-        firstLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(1)">1</button>`;
-        controls.appendChild(firstLi);
-        
-        if (startPage > 2) {
-            const ellipsisLi = document.createElement('li');
-            ellipsisLi.className = "page-item disabled";
-            ellipsisLi.innerHTML = `<span class="page-text-span">...</span>`;
-            controls.appendChild(ellipsisLi);
+            plugins: {
+                legend: {
+                    labels: { color: "#f8f9fa" }
+                }
+            }
         }
     }
+);
 
-    for (let i = startPage; i <= endPage; i++) {
-        const pageLi = document.createElement('li');
-        pageLi.className = `page-item ${currentPage === i ? 'active' : ''}`;
-        pageLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(${i})">${i}</button>`;
-        controls.appendChild(pageLi);
-    }
 
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-            const ellipsisLi = document.createElement('li');
-            ellipsisLi.className = "page-item disabled";
-            ellipsisLi.innerHTML = `<span class="page-text-span">...</span>`;
-            controls.appendChild(ellipsisLi);
-        }
-        
-        const lastLi = document.createElement('li');
-        lastLi.className = `page-item`;
-        lastLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(${totalPages})">${totalPages}</button>`;
-        controls.appendChild(lastLi);
-    }
+// =====================================================
+// LIVE DATA
+// =====================================================
 
-    const nextLi = document.createElement('li');
-    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-    nextLi.innerHTML = `<button class="page-link" type="button" onclick="changePage(${currentPage + 1})">&raquo;</button>`;
-    controls.appendChild(nextLi);
-}
+let liveReadings = [];
 
-function changePage(page) {
-    currentPage = page;
-    renderTableAndPagination();
-}
+async function loadLiveData() {
 
-async function loadReadings() {
     try {
+
         const response = await fetch("/latest/");
-        if (!response.ok) throw new Error('Network error');
-        const data = await response.json();
 
-        readingsData = data;
+        if (!response.ok) {
+            throw new Error("Unable to retrieve latest readings.");
+        }
 
-        if (data.length > 0) {
-            const latestTime = data[0].time ? (data[0].time.split(' ')[1] || data[0].time) : new Date().toLocaleTimeString();
+        const devices = await response.json();
 
-            powerChart.data.labels.push(latestTime);
-            if (powerChart.data.labels.length > maxTimePoints) {
-                powerChart.data.labels.shift();
+        liveReadings = devices;
+
+        const timestamp = new Date().toLocaleTimeString();
+
+        liveChart.data.labels.push(timestamp);
+
+        if (liveChart.data.labels.length > 15) {
+            liveChart.data.labels.shift();
+        }
+
+        devices.forEach((device, index) => {
+
+            const deviceId = device.device_id;
+
+            const powerElement = document.querySelector(
+                `.device-power[data-device-id="${CSS.escape(deviceId)}"]`
+            );
+
+            const voltageElement = document.querySelector(
+                `.device-voltage[data-device-id="${CSS.escape(deviceId)}"]`
+            );
+
+            const currentElement = document.querySelector(
+                `.device-current[data-device-id="${CSS.escape(deviceId)}"]`
+            );
+
+            const energyElement = document.querySelector(
+                `.device-energy[data-device-id="${CSS.escape(deviceId)}"]`
+            );
+
+            const pfElement = document.querySelector(
+                `.device-pf[data-device-id="${CSS.escape(deviceId)}"]`
+            );
+
+            const statusElement = document.querySelector(
+                `.device-status[data-device-id="${CSS.escape(deviceId)}"]`
+            );
+
+            if (powerElement) {
+                powerElement.textContent = device.power ?? "--";
             }
 
-            data.forEach((item) => {
-                let dataset = powerChart.data.datasets.find(ds => ds.label === item.device_name);
+            if (voltageElement) {
+                voltageElement.textContent =
+                    device.voltage !== null ? device.voltage + " V" : "--";
+            }
 
-                if (!dataset) {
-                    const colorIndex = powerChart.data.datasets.length % neonColors.length;
-                    const strokeColor = neonColors[colorIndex];
+            if (currentElement) {
+                currentElement.textContent =
+                    device.current !== null ? device.current + " A" : "--";
+            }
 
-                    dataset = {
-                        label: item.device_name,
-                        data: new Array(powerChart.data.labels.length - 1).fill(null),
-                        borderColor: strokeColor,
-                        backgroundColor: strokeColor + '15',
-                        tension: 0.35,
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        pointHoverRadius: 6,
-                        fill: false
-                    };
-                    powerChart.data.datasets.push(dataset);
+            if (energyElement) {
+                energyElement.textContent =
+                    device.energy !== null ? device.energy + " kWh" : "--";
+            }
+
+            if (pfElement) {
+                pfElement.textContent = device.pf ?? "--";
+            }
+
+            if (statusElement) {
+
+                if (device.status === "Online") {
+
+                    statusElement.textContent = "Active";
+                    statusElement.className = "badge badge-online device-status";
+
+                } else {
+
+                    statusElement.textContent = "Offline";
+                    statusElement.className = "badge badge-offline device-status";
+
                 }
+            }
 
-                dataset.data.push(parseFloat(item.power) || 0);
 
-                if (dataset.data.length > maxTimePoints) {
-                    dataset.data.shift();
-                }
-            });
+            // Create chart dataset if it does not exist
+            let dataset = liveChart.data.datasets.find(
+                item => item.label === device.device_name
+            );
 
-            powerChart.update();
-        }
+            if (!dataset) {
 
-        renderTableAndPagination();
-        
+                dataset = {
+                    label: device.device_name,
+                    data: new Array(liveChart.data.labels.length - 1).fill(null),
+                    borderColor: neonColors[index % neonColors.length],
+                    backgroundColor: neonColors[index % neonColors.length] + "20",
+                    borderWidth: 2,
+                    tension: .35,
+                    pointRadius: 3,
+                    fill: false
+                };
+
+                liveChart.data.datasets.push(dataset);
+
+            }
+
+            dataset.data.push(
+                device.power !== null ? Number(device.power) : null
+            );
+
+            if (dataset.data.length > 15) {
+                dataset.data.shift();
+            }
+
+        });
+
+        liveChart.update();
+
     } catch (error) {
-        console.error("Grid telemetry acquisition failed:", error);
+
+        console.error("Live monitoring error:", error);
+
     }
+
 }
 
-async function updateCards(){
 
-    const response = await fetch("/latest/");
-    const devices = await response.json();
+// =====================================================
+// HISTORICAL DATA
+// =====================================================
 
-    devices.forEach(device=>{
+let historyData = [];
 
-        document.getElementById("power-"+device.device_id).innerHTML =
-            device.power ?? "--";
 
-        document.getElementById("voltage-"+device.device_id).innerHTML =
-            (device.voltage ?? "--") + " V";
+// Load historical readings
+async function loadHistory() {
 
-        document.getElementById("current-"+device.device_id).innerHTML =
-            (device.current ?? "--") + " A";
+    const interval = document.getElementById("historyInterval").value;
+    const deviceId = document.getElementById("historyDevice").value;
 
-        document.getElementById("energy-"+device.device_id).innerHTML =
-            (device.energy ?? "--") + " kWh";
+    const startDate = document.getElementById("historyStartDate").value;
+    const endDate = document.getElementById("historyEndDate").value;
 
-        document.getElementById("pf-"+device.device_id).innerHTML =
-            device.pf ?? "--";
+    const status = document.getElementById("historyStatus");
+    const button = document.getElementById("historySearchBtn");
 
-        const badge = document.getElementById("status-"+device.device_id);
+    if (startDate && endDate && startDate > endDate) {
 
-        if(device.status=="Online"){
-            badge.innerHTML="Active";
-            badge.className="badge badge-online";
-        }else{
-            badge.innerHTML="Offline";
-            badge.className="badge badge-offline";
+        status.textContent = "Start date cannot be later than end date.";
+        return;
+
+    }
+
+    const params = new URLSearchParams();
+
+    params.append("interval", interval);
+
+    if (deviceId) {
+        params.append("device_id", deviceId);
+    }
+
+    if (startDate) {
+        params.append("start_date", startDate);
+    }
+
+    if (endDate) {
+        params.append("end_date", endDate);
+    }
+
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+
+    status.textContent = "Retrieving historical readings...";
+
+    try {
+
+        const response = await fetch(`/history/?${params.toString()}`);
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(result.message || "Failed to retrieve historical data.");
+
         }
+
+        historyData = result.data || [];
+
+        updateHistorySummary();
+
+        updateHistoryChart();
+
+        renderHistoryTable();
+
+        status.textContent =
+            `Successfully loaded ${historyData.length} historical records (${interval}).`;
+
+    } catch (error) {
+
+        console.error("Historical data error:", error);
+
+        historyData = [];
+
+        updateHistorySummary();
+        updateHistoryChart();
+        renderHistoryTable();
+
+        status.textContent = error.message;
+
+    } finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+            '<i class="bi bi-search me-1"></i> Generate Report';
+
+    }
+
+}
+
+
+// =====================================================
+// HISTORICAL SUMMARY
+// =====================================================
+
+function updateHistorySummary() {
+
+    const count = historyData.length;
+
+    document.getElementById("historyRecordCount").textContent = count;
+
+    if (count === 0) {
+
+        document.getElementById("historyAveragePower").textContent = "0 W";
+        document.getElementById("historyAverageVoltage").textContent = "0 V";
+        document.getElementById("historyPeakPower").textContent = "0 W";
+
+        return;
+
+    }
+
+    const averagePower =
+        historyData.reduce((sum, item) => sum + Number(item.power || 0), 0) / count;
+
+    const averageVoltage =
+        historyData.reduce((sum, item) => sum + Number(item.voltage || 0), 0) / count;
+
+    const peakPower =
+        Math.max(...historyData.map(item => Number(item.peak || 0)));
+
+    document.getElementById("historyAveragePower").textContent =
+        averagePower.toFixed(2) + " W";
+
+    document.getElementById("historyAverageVoltage").textContent =
+        averageVoltage.toFixed(2) + " V";
+
+    document.getElementById("historyPeakPower").textContent =
+        peakPower.toFixed(2) + " W";
+
+}
+
+
+// =====================================================
+// HISTORICAL CHART
+// =====================================================
+
+function updateHistoryChart() {
+
+    const labels = [...new Set(
+        historyData.map(item => item.time)
+    )];
+
+    const deviceNames = [...new Set(
+        historyData.map(item => item.device_name)
+    )];
+
+    const datasets = deviceNames.map((deviceName, index) => {
+
+        const color = neonColors[index % neonColors.length];
+
+        return {
+            label: deviceName,
+
+            data: labels.map(time => {
+
+                const reading = historyData.find(
+                    item =>
+                        item.device_name === deviceName &&
+                        item.time === time
+                );
+
+                return reading ? Number(reading.power) : null;
+
+            }),
+
+            borderColor: color,
+            backgroundColor: color + "20",
+            borderWidth: 2,
+            tension: .35,
+            pointRadius: 3,
+            fill: false
+        };
+
+    });
+
+    historyChart.data.labels = labels;
+    historyChart.data.datasets = datasets;
+
+    historyChart.update();
+
+}
+
+
+// =====================================================
+// HISTORICAL TABLE
+// =====================================================
+
+function renderHistoryTable() {
+
+    const table = document.getElementById("historyTable");
+
+    const search = document.getElementById("historySearch")
+        .value.toLowerCase()
+        .trim();
+
+    const filtered = historyData.filter(item => {
+
+        return (
+            String(item.device_name || "").toLowerCase().includes(search) ||
+            String(item.time || "").toLowerCase().includes(search)
+        );
+
+    });
+
+    table.innerHTML = "";
+
+    if (filtered.length === 0) {
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 8;
+        cell.className = "text-center text-muted py-4";
+        cell.textContent = "No historical records found.";
+
+        row.appendChild(cell);
+        table.appendChild(row);
+
+        return;
+
+    }
+
+    filtered.forEach(item => {
+
+        const row = document.createElement("tr");
+
+        const values = [
+            item.device_name,
+            `${item.voltage} V`,
+            `${item.current} A`,
+            `${item.power} W`,
+            `${item.energy} kWh`,
+            item.pf,
+            `${item.peak} W`,
+            item.time
+        ];
+
+        values.forEach((value, index) => {
+
+            const cell = document.createElement("td");
+
+            cell.textContent = value ?? "--";
+
+            if (index === 0) {
+                cell.className = "fw-bold text-info";
+            }
+
+            if (index === 3) {
+                cell.className = "text-danger fw-bold";
+            }
+
+            row.appendChild(cell);
+
+        });
+
+        table.appendChild(row);
 
     });
 
 }
 
-async function updateDeviceCards() {
 
-    const response = await fetch("/latest/");
-    const devices = await response.json();
+// =====================================================
+// AUTO REFRESH
+// =====================================================
 
-    devices.forEach(device => {
+// Live monitoring updates every 5 seconds.
+loadLiveData();
 
-        const power = document.getElementById(`power-${device.device_id}`);
-        const voltage = document.getElementById(`voltage-${device.device_id}`);
-        const current = document.getElementById(`current-${device.device_id}`);
-        const energy = document.getElementById(`energy-${device.device_id}`);
-        const pf = document.getElementById(`pf-${device.device_id}`);
-        const status = document.getElementById(`status-${device.device_id}`);
-
-        if (!power) return;
-
-        power.innerHTML = device.power ? `${device.power} <span class="fs-6 text-muted">W</span>` : "--";
-
-        voltage.textContent = device.voltage ? `${device.voltage} V` : "--";
-
-        current.textContent = device.current ? `${device.current} A` : "--";
-
-        energy.textContent = device.energy ? `${device.energy} kWh` : "--";
-
-        pf.textContent = device.pf ?? "--";
-
-        if (device.status === "Online") {
-
-            status.textContent = "Active";
-            status.classList.remove("badge-offline");
-            status.classList.add("badge-online");
-
-        } else {
-
-            status.textContent = "Offline";
-            status.classList.remove("badge-online");
-            status.classList.add("badge-offline");
-
-        }
-
-    });
-
-}
-
-updateDeviceCards();
-
-setInterval(updateDeviceCards, 5000);
-
-updateCards();
-
-setInterval(updateCards,5000);
+setInterval(loadLiveData, 5000);
 
 
-loadReadings();
-setInterval(loadReadings, 5000);
+// =====================================================
+// INITIAL HISTORICAL REPORT
+// =====================================================
+
+// Load initial report when the dashboard opens.
+loadHistory();
+
 </script>
 
 </body>
