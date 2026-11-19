@@ -13,205 +13,355 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <style>
-        :root {
-            --bg-main: #070a12;
-            --bg-card: rgba(18, 24, 38, 0.85);
-            --bg-card-header: rgba(26, 35, 58, 0.85);
-            --text-main: #f8f9fa;
-            --text-muted: #8b9bb4;
-            --neon-blue: #00f0ff;
-            --neon-green: #39ff14;
-            --neon-red: #ff3131;
-            --neon-orange: #ff9900;
-            --neon-purple: #b026ff;
-            --grid-border: rgba(34, 46, 75, 0.8);
-        }
 
-        body {
-            background-color: var(--bg-main);
-            background-image:
-                radial-gradient(circle at 15% 15%, rgba(0,240,255,.05), transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(176,38,255,.05), transparent 40%),
-                linear-gradient(rgba(0,240,255,.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,240,255,.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
-            background-attachment: fixed;
-            min-height: 100vh;
-            font-family: system-ui, sans-serif;
-            color: var(--text-main);
-        }
+<style>
+    :root {
+        --bg-main: #070a12;
+        --bg-card: rgba(18, 24, 38, 0.85);
+        --bg-card-header: rgba(26, 35, 58, 0.85);
 
-        .card {
-            border: 1px solid var(--grid-border);
-            border-radius: 14px;
-            margin-bottom: 24px;
-            background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px rgba(0,0,0,.45);
-        }
+        --text-main: #ffffff;
+        --text-muted: #c5d0df;
 
-        .card-header {
-            background: var(--bg-card-header) !important;
-            border-bottom: 1px solid var(--grid-border);
-            color: white !important;
-            font-weight: 600;
-            padding: 15px 18px;
-        }
+        --neon-blue: #00f0ff;
+        --neon-green: #39ff14;
+        --neon-red: #ff3131;
+        --neon-orange: #ff9900;
+        --neon-purple: #b026ff;
 
-        .header-blue { border-left: 4px solid var(--neon-blue); }
-        .header-green { border-left: 4px solid var(--neon-green); }
-        .header-purple { border-left: 4px solid var(--neon-purple); }
+        --grid-border: rgba(34, 46, 75, 0.8);
+    }
 
-        .device-card {
-            transition: .3s ease;
-        }
+    /* =====================================================
+       GLOBAL
+    ===================================================== */
 
-        .device-card:hover {
-            border-color: var(--neon-blue);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0,240,255,.15);
-        }
+    body {
+        background-color: var(--bg-main);
+        background-image:
+            radial-gradient(circle at 15% 15%, rgba(0,240,255,.05), transparent 40%),
+            radial-gradient(circle at 85% 85%, rgba(176,38,255,.05), transparent 40%),
+            linear-gradient(rgba(0,240,255,.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,240,255,.02) 1px, transparent 1px);
 
+        background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+        background-attachment: fixed;
+        min-height: 100vh;
+        font-family: system-ui, sans-serif;
+        color: var(--text-main) !important;
+    }
+
+    /* General text visibility */
+    body,
+    body p,
+    body span,
+    body label,
+    body small,
+    body li,
+    body td,
+    body th,
+    body h1,
+    body h2,
+    body h3,
+    body h4,
+    body h5,
+    body h6 {
+        color: #ffffff;
+    }
+
+    /* =====================================================
+       CARDS
+    ===================================================== */
+
+    .card {
+        border: 1px solid var(--grid-border);
+        border-radius: 14px;
+        margin-bottom: 24px;
+        background: var(--bg-card);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(0,0,0,.45);
+        color: #ffffff;
+    }
+
+    .card-body {
+        color: #ffffff !important;
+    }
+
+    .card-body p,
+    .card-body span,
+    .card-body label,
+    .card-body small,
+    .card-body div {
+        color: #ffffff;
+    }
+
+    .card-header {
+        background: var(--bg-card-header) !important;
+        border-bottom: 1px solid var(--grid-border);
+        color: #ffffff !important;
+        font-weight: 600;
+        padding: 15px 18px;
+    }
+
+    .header-blue {
+        border-left: 4px solid var(--neon-blue);
+    }
+
+    .header-green {
+        border-left: 4px solid var(--neon-green);
+    }
+
+    .header-purple {
+        border-left: 4px solid var(--neon-purple);
+    }
+
+    /* =====================================================
+       DEVICE CARDS
+    ===================================================== */
+
+    .device-card {
+        transition: .3s ease;
+    }
+
+    .device-card:hover {
+        border-color: var(--neon-blue);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0,240,255,.15);
+    }
+
+    .device-power-val {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--neon-blue) !important;
+        text-shadow: 0 0 12px rgba(0,240,255,.4);
+    }
+
+    .metric-label {
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: var(--text-muted) !important;
+    }
+
+    .metric-value {
+        font-weight: 600;
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       MUTED TEXT
+    ===================================================== */
+
+    .text-muted,
+    .section-subtitle,
+    .metric-label,
+    .text-secondary {
+        color: #c5d0df !important;
+    }
+
+    /* =====================================================
+       BADGES
+    ===================================================== */
+
+    .badge {
+        padding: .45em .75em;
+        border-radius: 6px;
+    }
+
+    .badge-online {
+        background: rgba(57,255,20,.12);
+        color: var(--neon-green) !important;
+        border: 1px solid rgba(57,255,20,.4);
+    }
+
+    .badge-offline {
+        background: rgba(255,49,49,.12);
+        color: var(--neon-red) !important;
+        border: 1px solid rgba(255,49,49,.4);
+    }
+
+    .badge-volt {
+        background: rgba(0,240,255,.1);
+        color: var(--neon-blue) !important;
+    }
+
+    .badge-amp {
+        background: rgba(57,255,20,.1);
+        color: var(--neon-green) !important;
+    }
+
+    .badge-watt {
+        background: rgba(255,49,49,.1);
+        color: var(--neon-red) !important;
+    }
+
+    /* =====================================================
+       FORM CONTROLS
+    ===================================================== */
+
+    .form-control,
+    .form-select {
+        background-color: #0b1220 !important;
+        border: 1px solid var(--grid-border);
+        color: #ffffff !important;
+    }
+
+    .form-control::placeholder {
+        color: #aebbd0 !important;
+        opacity: 1;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #0b1220 !important;
+        color: #ffffff !important;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 10px rgba(0,240,255,.2);
+    }
+
+    .form-select option {
+        background: #0b1220;
+        color: #ffffff;
+    }
+
+    .form-label {
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    .btn-neon {
+        background: linear-gradient(135deg, #00f0ff, #0072ff);
+        color: #050b14 !important;
+        border: none;
+        font-weight: 700;
+    }
+
+    .btn-neon:hover {
+        color: #050b14 !important;
+        opacity: .85;
+    }
+
+    /* =====================================================
+       TABLES
+    ===================================================== */
+
+    .table {
+        color: #ffffff !important;
+        --bs-table-color: #ffffff;
+        --bs-table-bg: transparent;
+        --bs-table-hover-color: #ffffff;
+        --bs-table-hover-bg: rgba(0,240,255,.08);
+        --bs-table-border-color: var(--grid-border);
+        border-color: var(--grid-border);
+    }
+
+    .table thead th {
+        background: rgba(10,14,23,.8) !important;
+        color: #ffffff !important;
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .table tbody td,
+    .table tbody th {
+        color: #ffffff !important;
+        background-color: transparent;
+    }
+
+    .table tbody tr:hover td,
+    .table tbody tr:hover th {
+        color: #ffffff !important;
+    }
+
+    .table td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    /* =====================================================
+       CHARTS
+    ===================================================== */
+
+    canvas {
+        max-height: 380px;
+    }
+
+    /* =====================================================
+       SECTION SUBTITLES
+    ===================================================== */
+
+    .section-subtitle {
+        color: #c5d0df !important;
+        font-size: .85rem;
+    }
+
+    .loading-text {
+        color: var(--neon-blue) !important;
+    }
+
+    /* =====================================================
+       HISTORY SUMMARY
+    ===================================================== */
+
+    .history-summary {
+        background: rgba(0,240,255,.04);
+        border: 1px solid var(--grid-border);
+        border-radius: 10px;
+        padding: 14px;
+        color: #ffffff !important;
+    }
+
+    .history-summary h4 {
+        color: var(--neon-blue) !important;
+        font-weight: 700;
+    }
+
+    .history-summary p,
+    .history-summary span,
+    .history-summary label {
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       STATUS AND MESSAGE TEXT
+    ===================================================== */
+
+    #historyStatus {
+        color: #ffffff !important;
+    }
+
+    #historyTable td {
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       LINKS
+    ===================================================== */
+
+    a {
+        color: var(--neon-blue);
+    }
+
+    a:hover {
+        color: #8df8ff;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 768px) {
         .device-power-val {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--neon-blue);
-            text-shadow: 0 0 12px rgba(0,240,255,.4);
+            font-size: 1.5rem;
         }
+    }
+</style>
 
-        .metric-label {
-            font-size: .72rem;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            color: var(--text-muted);
-        }
-
-        .metric-value {
-            font-weight: 600;
-            color: white;
-        }
-
-        .text-muted {
-            color: var(--text-muted) !important;
-        }
-
-        .badge {
-            padding: .45em .75em;
-            border-radius: 6px;
-        }
-
-        .badge-online {
-            background: rgba(57,255,20,.12);
-            color: var(--neon-green);
-            border: 1px solid rgba(57,255,20,.4);
-        }
-
-        .badge-offline {
-            background: rgba(255,49,49,.12);
-            color: var(--neon-red);
-            border: 1px solid rgba(255,49,49,.4);
-        }
-
-        .badge-volt {
-            background: rgba(0,240,255,.1);
-            color: var(--neon-blue);
-        }
-
-        .badge-amp {
-            background: rgba(57,255,20,.1);
-            color: var(--neon-green);
-        }
-
-        .badge-watt {
-            background: rgba(255,49,49,.1);
-            color: var(--neon-red);
-        }
-
-        .form-control,
-        .form-select {
-            background-color: #0b1220;
-            border: 1px solid var(--grid-border);
-            color: white;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            background-color: #0b1220;
-            color: white;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0,240,255,.2);
-        }
-
-        .form-select option {
-            background: #0b1220;
-            color: white;
-        }
-
-        .btn-neon {
-            background: linear-gradient(135deg, #00f0ff, #0072ff);
-            color: #050b14;
-            border: none;
-            font-weight: 700;
-        }
-
-        .btn-neon:hover {
-            color: #050b14;
-            opacity: .85;
-        }
-
-        .table {
-            color: white;
-            --bs-table-bg: transparent;
-            --bs-table-hover-bg: rgba(0,240,255,.04);
-            border-color: var(--grid-border);
-        }
-
-        .table thead th {
-            background: rgba(10,14,23,.8);
-            color: var(--text-muted);
-            font-size: .72rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            white-space: nowrap;
-        }
-
-        .table td {
-            white-space: nowrap;
-            vertical-align: middle;
-        }
-
-        canvas {
-            max-height: 380px;
-        }
-
-        .section-subtitle {
-            color: var(--text-muted);
-            font-size: .85rem;
-        }
-
-        .loading-text {
-            color: var(--neon-blue);
-        }
-
-        .history-summary {
-            background: rgba(0,240,255,.04);
-            border: 1px solid var(--grid-border);
-            border-radius: 10px;
-            padding: 14px;
-        }
-
-        .history-summary h4 {
-            color: var(--neon-blue);
-            font-weight: 700;
-        }
-
-        @media (max-width: 768px) {
-            .device-power-val {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
 </head>
 
 <body>

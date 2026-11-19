@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,23 +14,38 @@
             --bg-main: #0b0f19;
             --bg-card: #121826;
             --bg-card-header: #1a233a;
-            --text-main: #f8f9fa;
-            --text-muted: #8b9bb4;
+
+            --text-main: #ffffff;
+            --text-muted: #c5d0df;
+
             --neon-blue: #00f0ff;
             --neon-green: #39ff14;
             --grid-border: #222e4b;
         }
 
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             background-color: var(--bg-main);
-            background-image: 
+            background-image:
                 linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+
             background-size: 20px 20px;
             min-height: 100vh;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-            color: var(--text-main);
+            color: var(--text-main) !important;
         }
+
+        /* =====================================================
+           FORM CARD
+        ===================================================== */
 
         .form-card {
             border: 1px solid var(--grid-border);
@@ -38,6 +54,7 @@
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
             max-width: 500px;
             width: 100%;
+            color: #ffffff !important;
         }
 
         .card-header {
@@ -48,10 +65,23 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             border-left: 4px solid var(--neon-blue);
+            color: #ffffff !important;
         }
 
+        .card-header i {
+            color: var(--neon-blue) !important;
+        }
+
+        .card-body {
+            color: #ffffff !important;
+        }
+
+        /* =====================================================
+           FORM LABELS
+        ===================================================== */
+
         .form-label {
-            color: var(--text-muted);
+            color: #ffffff !important;
             font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -59,22 +89,44 @@
             margin-bottom: 0.5rem;
         }
 
+        /* =====================================================
+           INPUT FIELDS
+        ===================================================== */
+
         .form-control {
             border-radius: 8px;
-            background-color: #0b0f19;
+            background-color: #0b0f19 !important;
             border: 1px solid var(--grid-border);
             padding: 0.6rem 0.75rem;
-            color: var(--text-main);
+            color: #ffffff !important;
             transition: all 0.2s ease;
         }
-        
+
+        .form-control::placeholder {
+            color: #aebbd0 !important;
+            opacity: 1;
+        }
+
         .form-control:focus {
-            background-color: #0b0f19;
-            color: var(--text-main);
+            background-color: #0b0f19 !important;
+            color: #ffffff !important;
             border-color: var(--neon-blue);
             outline: 0;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
         }
+
+        /* Browser autofill */
+        .form-control:-webkit-autofill,
+        .form-control:-webkit-autofill:hover,
+        .form-control:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff !important;
+            box-shadow: 0 0 0 1000px #0b0f19 inset !important;
+            transition: background-color 9999s ease-in-out 0s;
+        }
+
+        /* =====================================================
+           SUBMIT BUTTON
+        ===================================================== */
 
         .btn-submit {
             border-radius: 8px;
@@ -82,6 +134,7 @@
             font-weight: 600;
             background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
             border: none;
+            color: #ffffff !important;
             box-shadow: 0 0 15px rgba(0, 114, 255, 0.4);
             transition: all 0.2s ease;
             width: 100%;
@@ -91,64 +144,118 @@
             transform: translateY(-1px);
             box-shadow: 0 0 22px rgba(0, 240, 255, 0.6);
             opacity: 0.95;
+            color: #ffffff !important;
         }
+
+        .btn-submit:focus {
+            color: #ffffff !important;
+            box-shadow: 0 0 0 0.25rem rgba(0, 240, 255, 0.25);
+        }
+
+        /* =====================================================
+           CANCEL BUTTON
+        ===================================================== */
 
         .btn-cancel {
             background: transparent;
             border: 1px solid var(--grid-border);
-            color: var(--text-muted);
+            color: #c5d0df !important;
             border-radius: 8px;
             transition: all 0.2s ease;
         }
 
         .btn-cancel:hover {
-            border-color: var(--text-muted);
-            color: var(--text-main);
+            background: rgba(0, 240, 255, 0.08);
+            border-color: var(--neon-blue);
+            color: #ffffff !important;
+        }
+
+        .btn-cancel i {
+            color: inherit;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 576px) {
+            .form-card {
+                max-width: 100%;
+            }
+
+            .card-body {
+                padding: 1.25rem !important;
+            }
         }
     </style>
 </head>
+
 <body class="d-flex align-items-center justify-content-center py-5">
 
-<div class="container d-flex justify-content-center">
-    <div class="form-card card shadow-sm">
-        
-        <div class="card-header py-3 text-white">
-            <i class="bi bi-cpu text-info me-2"></i> System Device Registration
+    <div class="container d-flex justify-content-center">
+        <div class="form-card card shadow-sm">
+
+            <div class="card-header py-3 text-white">
+                <i class="bi bi-cpu me-2"></i>
+                System Device Registration
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST" autocomplete="off">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Device ID</label>
+                        <input
+                            type="text"
+                            name="device_id"
+                            class="form-control"
+                            placeholder="e.g., NODE-ESP32-01"
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Device Name</label>
+                        <input
+                            type="text"
+                            name="device_name"
+                            class="form-control"
+                            placeholder="e.g., Main Breaker Unit"
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Location</label>
+                        <input
+                            type="text"
+                            name="location"
+                            class="form-control"
+                            placeholder="e.g., Server Room Rack B"
+                            required
+                        >
+                    </div>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <a
+                            href="{% url 'device_list' %}"
+                            class="btn btn-cancel flex-shrink-0 px-3 d-flex align-items-center justify-content-center"
+                        >
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+
+                        <button type="submit" class="btn btn-primary btn-submit text-white">
+                            <i class="bi bi-plug me-2"></i>
+                            Register Device
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
         </div>
-
-        <div class="card-body p-4">
-            <form method="POST" autocomplete="off">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label class="form-label">Device ID</label>
-                    <input type="text" name="device_id" class="form-control" placeholder="e.g., NODE-ESP32-01" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Device Name</label>
-                    <input type="text" name="device_name" class="form-control" placeholder="e.g., Main Breaker Unit" required>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label">Location</label>
-                    <input type="text" name="location" class="form-control" placeholder="e.g., Server Room Rack B" required>
-                </div>
-
-                <div class="d-flex gap-3 mt-4">
-                    <a href="/devices/" class="btn btn-cancel flex-shrink-0 px-3 d-flex align-items-center justify-content-center">
-                        <i class="bi bi-arrow-left"></i>
-                    </a>
-                    <button type="submit" class="btn btn-primary btn-submit text-white">
-                        <i class="bi bi-plug me-2"></i> Register Device
-                    </button>
-                </div>
-
-            </form>
-        </div>
-
     </div>
-</div>
 
 </body>
 </html>
