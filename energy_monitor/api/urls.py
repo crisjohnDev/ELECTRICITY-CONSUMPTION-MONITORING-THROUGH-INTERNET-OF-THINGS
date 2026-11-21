@@ -32,4 +32,18 @@ urlpatterns = [
         views.historical_readings,
         name="historical_readings"
     ),
+
+    # Edit Device
+    path(
+        "devices/edit/<int:device_id>/",
+        views.edit_device,
+        name="edit_device"
+    ),
+
+    # Delete Device
+    path(
+        "devices/delete/<int:device_id>/",
+        views.delete_device,
+        name="delete_device"
+    ),
 ]

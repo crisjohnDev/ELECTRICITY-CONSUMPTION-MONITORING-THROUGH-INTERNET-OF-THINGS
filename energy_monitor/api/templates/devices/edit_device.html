@@ -1,0 +1,223 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Device | Energy Monitoring System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+
+        <div class="w-full max-w-2xl">
+
+            <!-- HEADER -->
+            <div class="mb-6">
+
+                <a href="{% url 'device_list' %}"
+                   class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
+
+                    <span>←</span>
+                    Back to Devices
+
+                </a>
+
+                <h1 class="text-2xl font-bold text-gray-800 mt-4">
+                    Edit Device
+                </h1>
+
+                <p class="text-gray-500 text-sm mt-1">
+                    Update the registered device information.
+                </p>
+
+            </div>
+
+
+            <!-- FORM CARD -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+
+                <!-- CARD HEADER -->
+                <div class="bg-gray-900 px-6 py-5">
+
+                    <h2 class="text-white text-lg font-semibold">
+                        Device Information
+                    </h2>
+
+                    <p class="text-gray-400 text-sm mt-1">
+                        Modify your device details below.
+                    </p>
+
+                </div>
+
+
+                <!-- CARD BODY -->
+                <div class="p-6 md:p-8">
+
+                    {% if error %}
+
+                    <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                        {{ error }}
+                    </div>
+
+                    {% endif %}
+
+
+                    <form method="POST" class="space-y-6">
+
+                        {% csrf_token %}
+
+
+                        <!-- DEVICE ID -->
+                        <div>
+
+                            <label for="device_id"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">
+
+                                Device ID
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="device_id"
+                                name="device_id"
+                                value="{{ device.device_id }}"
+                                required
+                                maxlength="100"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter device ID"
+                            >
+
+                        </div>
+
+
+                        <!-- DEVICE NAME -->
+                        <div>
+
+                            <label for="device_name"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">
+
+                                Device Name
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="device_name"
+                                name="device_name"
+                                value="{{ device.device_name }}"
+                                required
+                                maxlength="150"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter device name"
+                            >
+
+                        </div>
+
+
+                        <!-- LOCATION -->
+                        <div>
+
+                            <label for="location"
+                                   class="block text-sm font-semibold text-gray-700 mb-2">
+
+                                Installation Location
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                value="{{ device.location|default:'' }}"
+                                maxlength="255"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter installation location"
+                            >
+
+                        </div>
+
+
+                        <!-- DEVICE INFORMATION -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+
+                            <h3 class="text-sm font-semibold text-gray-700 mb-3">
+                                Device Details
+                            </h3>
+
+                            <div class="flex justify-between text-sm py-2">
+
+                                <span class="text-gray-500">
+                                    Database ID
+                                </span>
+
+                                <span class="font-medium text-gray-800">
+                                    #{{ device.id }}
+                                </span>
+
+                            </div>
+
+                            {% if device.created_at %}
+
+                            <div class="flex justify-between text-sm py-2">
+
+                                <span class="text-gray-500">
+                                    Registered
+                                </span>
+
+                                <span class="font-medium text-gray-800">
+                                    {{ device.created_at|date:"M d, Y" }}
+                                </span>
+
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+
+                            <a
+                                href="{% url 'device_list' %}"
+                                class="px-6 py-3 text-center rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition"
+                            >
+                                Cancel
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-md"
+                            >
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <p class="text-center text-xs text-gray-400 mt-6">
+                Energy Monitoring System
+            </p>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

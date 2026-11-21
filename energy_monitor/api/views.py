@@ -14,6 +14,94 @@ from .models import Device, EnergyReading
 
 
 # =========================================================
+# EDIT DEVICE
+# =========================================================
+
+def edit_device(request, device_id):
+
+    try:
+        device = Device.objects.get(id=device_id)
+
+    except Device.DoesNotExist:
+        return redirect("device_list")
+
+    if request.method == "POST":
+
+        new_device_id = request.POST.get(
+            "device_id", ""
+        ).strip()
+
+        device_name = request.POST.get(
+            "device_name", ""
+        ).strip()
+
+        location = request.POST.get(
+            "location", ""
+        ).strip()
+
+        if not new_device_id or not device_name:
+
+            return render(
+                request,
+                "devices/edit_device.html",
+                {
+                    "device": device,
+                    "error": "Device ID and device name are required."
+                }
+            )
+
+        # Check duplicate device ID
+        if Device.objects.filter(
+            device_id=new_device_id
+        ).exclude(id=device.id).exists():
+
+            return render(
+                request,
+                "devices/edit_device.html",
+                {
+                    "device": device,
+                    "error": "This device ID is already registered."
+                }
+            )
+
+        # Update device
+        device.device_id = new_device_id
+        device.device_name = device_name
+        device.location = location
+
+        device.save()
+
+        return redirect("device_list")
+
+    return render(
+        request,
+        "devices/edit_device.html",
+        {"device": device}
+    )
+
+
+# =========================================================
+# DELETE DEVICE
+# =========================================================
+
+def delete_device(request, device_id):
+
+    if request.method != "POST":
+        return redirect("device_list")
+
+    try:
+        device = Device.objects.get(id=device_id)
+
+    except Device.DoesNotExist:
+        return redirect("device_list")
+
+    device.delete()
+
+    return redirect("device_list")
+
+
+
+# =========================================================
 # RECEIVE ESP8266 DATA
 # =========================================================
 
